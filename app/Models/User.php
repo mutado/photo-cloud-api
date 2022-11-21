@@ -23,6 +23,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Collection|OriginalPhoto[] $originalPhotos
+ * @property-read Collection|Folder[] $folders
  */
 class User extends Authenticatable
 {
@@ -64,5 +65,13 @@ class User extends Authenticatable
     public function originalPhotos(): HasMany
     {
         return $this->hasMany(OriginalPhoto::class);
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function folders(): HasMany
+    {
+        return $this->hasMany(Folder::class);
     }
 }

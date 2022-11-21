@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FoldersController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OriginalPhotosController;
 use App\Http\Controllers\RegisterController;
@@ -18,11 +19,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+    return response()->json(\App\Http\Resources\UserResource::make($request->user()->load(['originalPhotos', 'folders'])));
 });
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::apiResource('photos', OriginalPhotosController::class);
+    Route::apiResources([
+        'photos' => OriginalPhotosController::class,
+        'folders' => FoldersController::class,
+    ]);
     Route::get('photos/{photo}/download', [OriginalPhotosController::class, 'download'])->name('original-photos.download');
 });
 

@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
+use App\Models\Folder;
 use App\Models\OriginalPhoto;
+use App\Policies\FolderPolicy;
 use App\Policies\OriginalPhotoPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
@@ -17,6 +19,7 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         // 'App\Models\Model' => 'App\Policies\ModelPolicy',
         OriginalPhoto::class => OriginalPhotoPolicy::class,
+        Folder::class => FolderPolicy::class,
     ];
 
     /**
