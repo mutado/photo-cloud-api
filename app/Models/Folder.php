@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 /**
  * App\Models\Folder
@@ -14,6 +15,10 @@ use Illuminate\Support\Carbon;
  * @property string $name
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
+ * @property-read User $user
+ * @property-read Collection|PhotoReference[] $photoReferences
+ * @property-read Collection|OriginalPhoto[] $photos
  */
 class Folder extends Model
 {
@@ -23,4 +28,19 @@ class Folder extends Model
         'user_id',
         'name',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function photos()
+    {
+        return $this->hasManyThrough(OriginalPhoto::class, PhotoReference::class, 'folder_id', 'id', 'id', 'photo_id');
+    }
+
+    public function photoReferences()
+    {
+        return $this->hasMany(PhotoReference::class);
+    }
 }

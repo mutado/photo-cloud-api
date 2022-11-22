@@ -5,8 +5,10 @@ namespace App\Providers;
 // use Illuminate\Support\Facades\Gate;
 use App\Models\Folder;
 use App\Models\OriginalPhoto;
+use App\Models\PhotoReference;
 use App\Policies\FolderPolicy;
 use App\Policies\OriginalPhotoPolicy;
+use App\Policies\PhotoReferencePolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -20,6 +22,7 @@ class AuthServiceProvider extends ServiceProvider
         // 'App\Models\Model' => 'App\Policies\ModelPolicy',
         OriginalPhoto::class => OriginalPhotoPolicy::class,
         Folder::class => FolderPolicy::class,
+        PhotoReference::class => PhotoReferencePolicy::class,
     ];
 
     /**

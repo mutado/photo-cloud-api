@@ -19,6 +19,7 @@ class OriginalPhotoResource extends JsonResource
             'id' => $this->id,
             'user_id' => $this->user_id,
             'path' => route('original-photos.download', $this->id),
+            'references' => PhotoReferenceResource::collection($this->whenLoaded('photoReferences')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
 
