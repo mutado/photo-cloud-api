@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
@@ -19,6 +20,7 @@ use Illuminate\Support\Collection;
  * @property-read User $user
  * @property-read Collection|PhotoReference[] $photoReferences
  * @property-read Collection|OriginalPhoto[] $photos
+ * @property-read SharedFolder $sharedFolder
  */
 class Folder extends Model
 {
@@ -42,5 +44,13 @@ class Folder extends Model
     public function photoReferences()
     {
         return $this->hasMany(PhotoReference::class);
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function sharedFolder(): HasOne
+    {
+        return $this->hasOne(SharedFolder::class);
     }
 }

@@ -74,4 +74,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Folder::class);
     }
+
+    /**
+     * @return HasMany
+     */
+    public function sharedFolders(): HasMany
+    {
+        return $this->hasMany(SharedFolder::class);
+    }
 }

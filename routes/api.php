@@ -5,6 +5,8 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OriginalPhotosController;
 use App\Http\Controllers\PhotoReferencesController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\SharedFolderEmailsController;
+use App\Http\Controllers\SharedFoldersController;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -29,10 +31,14 @@ Route::middleware('auth:sanctum')->group(function () {
         'photos' => OriginalPhotosController::class,
         'folders' => FoldersController::class,
         'folders.photos' => PhotoReferencesController::class,
+        'shared' => SharedFoldersController::class,
+        'shared.emails' => SharedFolderEmailsController::class,
     ]);
     Route::get('folders/{folder}/references/{photoReference}', [PhotoReferencesController::class, 'showReference']);
     Route::post('folders/{folder}/photos/{photo}', [PhotoReferencesController::class, 'addToFolder']);
     Route::delete('folders/{folder}/references/{photoReference}', [PhotoReferencesController::class, 'destroyReference']);
+    Route::post('folders/{folder}/share', [FoldersController::class, 'share']);
+
     Route::get('photos/{photo}/download', [OriginalPhotosController::class, 'download'])->name('original-photos.download');
 });
 
