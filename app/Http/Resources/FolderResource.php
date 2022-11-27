@@ -22,8 +22,11 @@ class FolderResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
 
+            'photos_count' => $this->photoReferences->count(),
+
             'user' => new UserResource($this->whenLoaded('user')),
             'shared' => new SharedFolderResource($this->whenLoaded('sharedFolder')),
+            'photo_references' => PhotoReferenceResource::collection($this->whenLoaded('photoReferences')),
         ];
     }
 }

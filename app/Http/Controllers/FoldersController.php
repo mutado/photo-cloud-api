@@ -43,7 +43,7 @@ class FoldersController extends Controller
     public function show(Folder $folder) : JsonResponse
     {
         $this->authorize('view', $folder);
-        return response()->json(FolderResource::make($folder));
+        return response()->json(FolderResource::make($folder->load('photoReferences.photo')));
     }
 
     /**

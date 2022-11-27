@@ -7,6 +7,7 @@ use App\Http\Controllers\PhotoReferencesController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SharedFolderEmailsController;
 use App\Http\Controllers\SharedFoldersController;
+use App\Http\Controllers\StatisticsController;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -40,6 +41,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('folders/{folder}/share', [FoldersController::class, 'share']);
 
     Route::get('photos/{photo}/download', [OriginalPhotosController::class, 'download'])->name('original-photos.download');
+
+    Route::get('statistics/storage', [StatisticsController::class, 'diskUsage']);
+    Route::get('statistics/summary', [StatisticsController::class, 'summary']);
 });
 
 Route::post('/login', [LoginController::class, 'authenticate']);

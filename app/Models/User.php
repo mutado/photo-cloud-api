@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -81,5 +82,13 @@ class User extends Authenticatable
     public function sharedFolders(): HasMany
     {
         return $this->hasMany(SharedFolder::class);
+    }
+
+    /**
+     * @return HasManyThrough
+     */
+    public function sharedFolderEmails(): HasManyThrough
+    {
+        return $this->hasManyThrough(SharedFolderEmail::class, SharedFolder::class, 'user_id', 'shared_folder_id', 'id', 'id');
     }
 }
