@@ -40,7 +40,7 @@ class FoldersController extends Controller
      * @return JsonResponse
      * @throws AuthorizationException
      */
-    public function show(Folder $folder) : JsonResponse
+    public function show(Folder $folder): JsonResponse
     {
         $this->authorize('view', $folder);
         return response()->json(FolderResource::make($folder->load('photoReferences.photo')));
@@ -52,7 +52,7 @@ class FoldersController extends Controller
      * @return JsonResponse
      * @throws AuthorizationException
      */
-    public function update(StoreFolderRequest $request, Folder $folder) : JsonResponse
+    public function update(StoreFolderRequest $request, Folder $folder): JsonResponse
     {
         $this->authorize('update', $folder);
         $folder->update($request->validated());
@@ -64,7 +64,7 @@ class FoldersController extends Controller
      * @return JsonResponse
      * @throws AuthorizationException
      */
-    public function destroy(Folder $folder) : JsonResponse
+    public function destroy(Folder $folder): JsonResponse
     {
         $this->authorize('delete', $folder);
         $folder->delete();
@@ -77,7 +77,7 @@ class FoldersController extends Controller
      * @return JsonResponse
      * @throws AuthorizationException
      */
-    public function share(ShareFolderRequest $request, Folder $folder) : JsonResponse
+    public function share(ShareFolderRequest $request, Folder $folder): JsonResponse
     {
         $this->authorize('update', $folder);
 
@@ -87,6 +87,7 @@ class FoldersController extends Controller
             $folder->sharedFolder->update($validated);
         } else {
             $folder->sharedFolder()->create($validated);
+            $folder->refresh();
         }
         $folder->sharedFolder->emails()->createMany(collect($validated['emails'])->map(function ($email) {
             return ['email' => $email];

@@ -38,14 +38,14 @@ class SharedFolderEmailsController extends Controller
 
     /**
      * @param SharedFolder $shared
-     * @param SharedFolderEmail $email
+     * @param string $email
      * @return JsonResponse
      * @throws AuthorizationException
      */
     public function destroy(SharedFolder $shared, string $email): JsonResponse
     {
         $this->authorize('update', $shared);
-        $shared->emails()->where('email', $email)->delete();
-        return response()->json(SharedFolderEmailResource::collection($shared->emails), 201);
+        SharedFolderEmail::findOrFail(['email' => $email,'shared_folder_id' => $shared->id])->delete();
+        return response()->json(SharedFolderEmailResource::collection($shared->emails), 200);
     }
 }

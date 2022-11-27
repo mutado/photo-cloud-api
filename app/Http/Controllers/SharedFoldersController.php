@@ -64,7 +64,7 @@ class SharedFoldersController extends Controller
         $this->authorize('update', $shared);
         $validated = $request->validated();
         $shared->update($validated);
-        return response()->json(SharedFolderResource::make($shared->fresh()));
+        return response()->json(SharedFolderResource::make($shared->fresh()->load('emails')));
     }
 
     /**

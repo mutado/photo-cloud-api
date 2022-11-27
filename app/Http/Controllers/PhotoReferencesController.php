@@ -102,11 +102,12 @@ class PhotoReferencesController extends Controller
     }
 
     /**
+     * @param Folder $folder
      * @param PhotoReference $photoReference
      * @return JsonResponse
      * @throws AuthorizationException
      */
-    public function destroyReference(PhotoReference $photoReference): JsonResponse
+    public function destroyReference(Folder $folder, PhotoReference $photoReference): JsonResponse
     {
         $this->authorize('delete', $photoReference);
         $photoReference->delete();

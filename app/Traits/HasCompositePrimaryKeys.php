@@ -6,6 +6,7 @@ use App\Models\SharedFolderEmail;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
  * Trait HasCompositePrimaryKeys
@@ -61,5 +62,24 @@ trait HasCompositePrimaryKeys
         }
 
         return $query->first($columns);
+    }
+
+    /**
+     * Execute a query for a single record by ID or throw an exception.
+     *
+     * @param array $ids Array of keys, like [column => value].
+     * @param array $columns
+     *
+     * @return Model
+     * @throws ModelNotFoundException
+     */
+    public static function findOrFail(array $ids, array $columns = ['*']): Model
+    {
+        if (!is_null($model = static::find($ids, $columns))) {
+            return $model;
+        }
+        throw (new ModelNotFoundException)->setModel(
+            get_class(new static), $ids
+        );
     }
 }
