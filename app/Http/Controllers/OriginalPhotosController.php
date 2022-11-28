@@ -10,9 +10,18 @@ use Illuminate\Http\JsonResponse;
 use Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
+/**
+ * @group Photos
+ * Class OriginalPhotosController
+ * @package App\Http\Controllers
+ */
 class OriginalPhotosController extends Controller
 {
     /**
+     * Index all photos
+     *
+     * Returns a list of all photos.
+     *
      * @return JsonResponse
      * @throws AuthorizationException
      */
@@ -23,6 +32,12 @@ class OriginalPhotosController extends Controller
     }
 
     /**
+     * Store a photo
+     *
+     * Creates a new photo and returns it.
+     *
+     * @bodyParam photo file required The photo to upload.
+     *
      * @param StorePhotoRequest $request
      * @return JsonResponse
      * @throws AuthorizationException
@@ -39,6 +54,10 @@ class OriginalPhotosController extends Controller
     }
 
     /**
+     * Show a photo
+     *
+     * Returns a photo.
+     *
      * @param OriginalPhoto $photo
      * @return JsonResponse
      * @throws AuthorizationException
@@ -50,6 +69,10 @@ class OriginalPhotosController extends Controller
     }
 
     /**
+     * Download a photo
+     *
+     * Returns a photo file.
+     *
      * @param OriginalPhoto $photo
      * @return BinaryFileResponse
      * @throws AuthorizationException
@@ -61,6 +84,12 @@ class OriginalPhotosController extends Controller
     }
 
     /**
+     * Update a photo
+     *
+     * Updates a photo and returns it.
+     *
+     * @bodyParam photo file required The photo to upload.
+     *
      * @param StorePhotoRequest $request
      * @param OriginalPhoto $photo
      * @return JsonResponse
@@ -79,6 +108,10 @@ class OriginalPhotosController extends Controller
     }
 
     /**
+     * Delete a photo
+     *
+     * Deletes a photo.
+     *
      * @param OriginalPhoto $photo
      * @return JsonResponse
      * @throws AuthorizationException

@@ -11,9 +11,18 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
+/**
+ * @group Folders
+ * Class FoldersController
+ * @package App\Http\Controllers
+ */
 class FoldersController extends Controller
 {
     /**
+     * Index all folders
+     *
+     * Returns a list of all folders
+     *
      * @return JsonResponse
      * @throws AuthorizationException
      */
@@ -24,6 +33,10 @@ class FoldersController extends Controller
     }
 
     /**
+     * Store a new folder
+     *
+     * Creates a new folder and returns it.
+     *
      * @param StoreFolderRequest $request
      * @return JsonResponse
      * @throws AuthorizationException
@@ -36,6 +49,10 @@ class FoldersController extends Controller
     }
 
     /**
+     * Show a folder
+     *
+     * Returns a folder.
+     *
      * @param Folder $folder
      * @return JsonResponse
      * @throws AuthorizationException
@@ -47,6 +64,10 @@ class FoldersController extends Controller
     }
 
     /**
+     * Update a folder
+     *
+     * Updates a folder and returns it.
+     *
      * @param StoreFolderRequest $request
      * @param Folder $folder
      * @return JsonResponse
@@ -60,6 +81,10 @@ class FoldersController extends Controller
     }
 
     /**
+     * Delete a folder
+     *
+     * Deletes a folder.
+     *
      * @param Folder $folder
      * @return JsonResponse
      * @throws AuthorizationException
@@ -72,6 +97,10 @@ class FoldersController extends Controller
     }
 
     /**
+     * Share a folder
+     *
+     * Shares a folder with another user.
+     *
      * @param ShareFolderRequest $request
      * @param Folder $folder
      * @return JsonResponse

@@ -10,6 +10,13 @@ use Illuminate\Support\Facades\Auth;
 class LoginController extends Controller
 {
     /**
+     * Authenticate the user.
+     *
+     * This endpoint is used to authenticate the user. It will return a JWT token with user information.
+     *
+     * @group Authentication
+     *
+     * @unauthenticated
      * @param Request $request
      * @return JsonResponse
      */

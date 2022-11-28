@@ -12,4 +12,14 @@ class StoreFolderRequest extends FormRequest
             'name' => 'required|string|max:255',
         ];
     }
+
+    public function bodyParameters(): array
+    {
+        return [
+            'name' => [
+                'description' => 'The name of the folder. This field is required and must be a string.',
+                'example' => 'Folder name',
+            ]
+        ];
+    }
 }

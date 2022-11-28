@@ -33,8 +33,9 @@ Route::middleware('auth:sanctum')->group(function () {
         'folders' => FoldersController::class,
         'folders.photos' => PhotoReferencesController::class,
         'shared' => SharedFoldersController::class,
-        'shared.emails' => SharedFolderEmailsController::class,
     ]);
+    Route::apiResource('shared.emails', SharedFolderEmailsController::class)->only(['index', 'store', 'destroy']);
+
     Route::get('folders/{folder}/references/{photoReference}', [PhotoReferencesController::class, 'showReference']);
     Route::post('folders/{folder}/photos/{photo}', [PhotoReferencesController::class, 'addToFolder']);
     Route::delete('folders/{folder}/references/{photoReference}', [PhotoReferencesController::class, 'destroyReference']);

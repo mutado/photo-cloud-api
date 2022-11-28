@@ -12,9 +12,19 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
+/**
+ * Class PhotoReferencesController
+ * @package App\Http\Controllers
+ * @group Folders
+ * @subgroup Photo References
+ */
 class PhotoReferencesController extends Controller
 {
     /**
+     * Index all photo references
+     *
+     * Returns a list of all photo references in a folder.
+     *
      * @param Folder $folder
      * @return JsonResponse
      * @throws AuthorizationException
@@ -26,6 +36,12 @@ class PhotoReferencesController extends Controller
     }
 
     /**
+     * Store a photo in a folder
+     *
+     * Stores a new photo and adds it into a folder.
+     *
+     * @bodyParam photo file required The photo to upload.
+     *
      * @param StorePhotoRequest $request
      * @param Folder $folder
      * @return JsonResponse
@@ -49,6 +65,10 @@ class PhotoReferencesController extends Controller
     }
 
     /**
+     * Show a photo
+     *
+     * Returns a photo.
+     *
      * @param Folder $folder
      * @param OriginalPhoto $photo
      * @return JsonResponse
@@ -61,6 +81,10 @@ class PhotoReferencesController extends Controller
     }
 
     /**
+     * Show a photo reference
+     *
+     * Returns a photo reference.
+     *
      * @param Folder $folder
      * @param PhotoReference $photoReference
      * @return JsonResponse
@@ -73,6 +97,12 @@ class PhotoReferencesController extends Controller
     }
 
     /**
+     * Update a photo
+     *
+     * Updates a photo inside folder.
+     *
+     * @bodyParam photo file required The photo to upload.
+     *
      * @param StorePhotoRequest $request
      * @param Folder $folder
      * @param OriginalPhoto $photo
@@ -87,6 +117,9 @@ class PhotoReferencesController extends Controller
     }
 
     /**
+     * Add a photo to a folder
+     *
+     * Adds a photo to a folder. Creates a new reference.
      * @param Folder $folder
      * @param OriginalPhoto $photo
      * @return JsonResponse
@@ -102,6 +135,10 @@ class PhotoReferencesController extends Controller
     }
 
     /**
+     * Remove a photo from a folder
+     *
+     * Removes a photo from a folder. Deletes the reference.
+     *
      * @param Folder $folder
      * @param PhotoReference $photoReference
      * @return JsonResponse
@@ -115,7 +152,10 @@ class PhotoReferencesController extends Controller
     }
 
     /**
-     * @param Request $request
+     * Delete a photo
+     *
+     * Deletes a photo. Deletes all references.
+     *
      * @param Folder $folder
      * @param OriginalPhoto $photo
      * @return JsonResponse

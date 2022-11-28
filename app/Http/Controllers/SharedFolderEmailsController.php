@@ -9,10 +9,20 @@ use App\Models\SharedFolderEmail;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 
+/**
+ * @group Shared Folders
+ * Class SharedFolderEmailsController
+ * @package App\Http\Controllers
+ * @subgroup Shared Folder Emails
+ */
 class SharedFolderEmailsController extends Controller
 {
 
     /**
+     * Index all shared folder emails
+     *
+     * Returns a list of all shared folder emails.
+     *
      * @param SharedFolder $shared
      * @return JsonResponse
      * @throws AuthorizationException
@@ -24,6 +34,10 @@ class SharedFolderEmailsController extends Controller
     }
 
     /**
+     * Share a folder with an email
+     *
+     * Creates a new shared folder email and returns it. The shared folder must be owned by the authenticated user.
+     *
      * @param StoreSharedFolderEmailRequest $request
      * @param SharedFolder $shared
      * @return JsonResponse
@@ -37,6 +51,10 @@ class SharedFolderEmailsController extends Controller
     }
 
     /**
+     * Remove a shared folder email
+     *
+     * Removes a shared folder email.
+     *
      * @param SharedFolder $shared
      * @param string $email
      * @return JsonResponse

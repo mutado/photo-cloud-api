@@ -9,9 +9,18 @@ use App\Models\SharedFolder;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 
+/**
+ * @group Shared Folders
+ * Class SharedFoldersController
+ * @package App\Http\Controllers
+ */
 class SharedFoldersController extends Controller
 {
     /**
+     * Index all shared folders
+     *
+     * Returns a list of all shared folders.
+     *
      * @return JsonResponse
      * @throws AuthorizationException
      */
@@ -22,6 +31,10 @@ class SharedFoldersController extends Controller
     }
 
     /**
+     * Store a new shared folder
+     *
+     * Creates a new shared folder and returns it. The folder must be owned by the authenticated user.
+     *
      * @param StoreSharedFolderRequest $request
      * @return JsonResponse
      * @throws AuthorizationException
@@ -43,6 +56,10 @@ class SharedFoldersController extends Controller
     }
 
     /**
+     * Show a shared folder
+     *
+     * Returns a shared folder.
+     *
      * @param SharedFolder $shared
      * @return JsonResponse
      * @throws AuthorizationException
@@ -54,6 +71,10 @@ class SharedFoldersController extends Controller
     }
 
     /**
+     * Update a shared folder
+     *
+     * Updates a shared folder and returns it.
+     *
      * @param StoreSharedFolderRequest $request
      * @param SharedFolder $shared
      * @return JsonResponse
@@ -68,7 +89,11 @@ class SharedFoldersController extends Controller
     }
 
     /**
-     * @param SharedFolder $sharedFolder
+     * Delete a shared folder
+     *
+     * Deletes a shared folder.
+     *
+     * @param SharedFolder $shared
      * @return JsonResponse
      * @throws AuthorizationException
      */
@@ -80,6 +105,8 @@ class SharedFoldersController extends Controller
     }
 
     /**
+     * @unlisted
+     * @deprecated
      * @param SharedFolder $shared
      * @param StoreSharedFolderEmailRequest $request
      * @return JsonResponse

@@ -12,4 +12,14 @@ class StorePhotoRequest extends FormRequest
             'photo' => ['required', 'image', 'max:1024', 'mimes:jpeg,png,jpeg,gif'],
         ];
     }
+
+    public function bodyParameters(): array
+    {
+        return [
+            'photo' => [
+                'description' => 'The photo to upload. This field is required and must be an image.',
+                'example' => 'photo',
+            ]
+        ];
+    }
 }
