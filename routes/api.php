@@ -42,6 +42,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('folders/{folder}/share', [FoldersController::class, 'share']);
 
     Route::get('photos/{photo}/download', [OriginalPhotosController::class, 'download'])->name('original-photos.download');
+    Route::get('photos/download/{image}', [OriginalPhotosController::class, 'download.extention'])->name('original-photos.download.extention');
 
     Route::get('statistics/storage', [StatisticsController::class, 'diskUsage']);
     Route::get('statistics/summary', [StatisticsController::class, 'summary']);
