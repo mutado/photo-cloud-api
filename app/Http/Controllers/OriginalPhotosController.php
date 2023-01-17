@@ -10,6 +10,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Request;
+use Intervention\Image\Facades\Image;
 use Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -31,7 +32,7 @@ class OriginalPhotosController extends Controller
     public function index(): JsonResponse
     {
         $this->authorize('viewAny', OriginalPhoto::class);
-        return response()->json(OriginalPhotoResource::collection(auth()->user()->originalPhotos()->orderBy('created_at','desc')->paginate(20)));
+        return response()->json(OriginalPhotoResource::collection(auth()->user()->originalPhotos()->orderBy('created_at','desc')->paginate(100)));
     }
 
     /**
@@ -89,15 +90,44 @@ class OriginalPhotosController extends Controller
             abort(404);
         }
 
-        // if request format is base64, return base64 encoded file
-        if (request()->query('format') === 'base64') {
-            return response()->make(base64_encode(Storage::disk('local')->get($photo->path)), 200, [
-                'Content-Type' => 'text/plain',
-                'Content-Disposition' => 'attachment; filename="' . $photo->path . '"',
-            ]);
+        $imageFullPath = Storage::disk('local')->path($photo->path);
+        $image = Image::make($imageFullPath);
+
+        // if query param resolution is set, resize the image
+        if (Request::has('resolution')) {
+            switch (Request::get('resolution')) {
+                case 'low':
+                    $image =$image->resize(256, null, function ($constraint) {
+                        $constraint->aspectRatio();
+                    });
+                    break;
+                case 'medium':
+                    $image =$image->resize(480, null, function ($constraint) {
+                        $constraint->aspectRatio();
+                    });
+                    break;
+                case 'high':
+                    $image =$image->resize(1280, null, function ($constraint) {
+                        $constraint->aspectRatio();
+                    });
+                    break;
+            }
         }
 
-        return response()->download(storage_path('app/' . $photo->path));
+
+//        // if request format is base64, return base64 encoded file
+//        if (request()->query('format') === 'base64') {
+////            return response()->make(base64_encode(Storage::disk('local')->get($photo->path)), 200, [
+////                'Content-Type' => 'text/plain',
+////                'Content-Disposition' => 'attachment; filename="' . $photo->path . '"',
+////            ]);
+//            return response()->make(base64_encode($image->encode('data-url')), 200, [
+//                'Content-Type' => 'text/plain',
+//                'Content-Disposition' => 'attachment; filename="' . $photo->path . '"',
+//            ]);
+//        }
+
+        return $image->response(request()->query('format',$image->extension), request()->query('quality', 100));
     }
 
     /**
