@@ -32,7 +32,7 @@ class OriginalPhotosController extends Controller
     public function index(): JsonResponse
     {
         $this->authorize('viewAny', OriginalPhoto::class);
-        return response()->json(OriginalPhotoResource::collection(auth()->user()->originalPhotos()->orderBy('created_at','desc')->paginate(100)));
+        return response()->json(OriginalPhotoResource::collection(auth()->user()->originalPhotos()->orderBy('created_at', 'desc')->paginate(100)));
     }
 
     /**
@@ -62,12 +62,25 @@ class OriginalPhotosController extends Controller
      *
      * Returns a photo.
      *
-     * @param OriginalPhoto $photo
-     * @return JsonResponse
+     * @param Request $request
+     * @param $photo
      * @throws AuthorizationException
      */
-    public function show(OriginalPhoto $photo): JsonResponse
+    public function show(Request $request, $photo)
     {
+        // if photo has extension in the end of the string, return the photo with that extension
+        $arr = explode('.', $photo);
+        if (count($arr) > 1) {
+            $photo = OriginalPhoto::find($arr[0]);
+            $this->authorize('view', $photo);
+            $extension = $arr[1];
+
+            $imageFullPath = Storage::disk('local')->path($photo->path);
+            $image = Image::make($imageFullPath);
+
+            return $image->response($extension, request()->query('quality', 100));
+        }
+        $photo = OriginalPhoto::find($photo);
         $this->authorize('view', $photo);
         return response()->json(OriginalPhotoResource::make($photo));
     }
@@ -97,37 +110,24 @@ class OriginalPhotosController extends Controller
         if (Request::has('resolution')) {
             switch (Request::get('resolution')) {
                 case 'low':
-                    $image =$image->resize(256, null, function ($constraint) {
+                    $image = $image->resize(256, null, function ($constraint) {
                         $constraint->aspectRatio();
                     });
                     break;
                 case 'medium':
-                    $image =$image->resize(480, null, function ($constraint) {
+                    $image = $image->resize(480, null, function ($constraint) {
                         $constraint->aspectRatio();
                     });
                     break;
                 case 'high':
-                    $image =$image->resize(1280, null, function ($constraint) {
+                    $image = $image->resize(1280, null, function ($constraint) {
                         $constraint->aspectRatio();
                     });
                     break;
             }
         }
 
-
-//        // if request format is base64, return base64 encoded file
-//        if (request()->query('format') === 'base64') {
-////            return response()->make(base64_encode(Storage::disk('local')->get($photo->path)), 200, [
-////                'Content-Type' => 'text/plain',
-////                'Content-Disposition' => 'attachment; filename="' . $photo->path . '"',
-////            ]);
-//            return response()->make(base64_encode($image->encode('data-url')), 200, [
-//                'Content-Type' => 'text/plain',
-//                'Content-Disposition' => 'attachment; filename="' . $photo->path . '"',
-//            ]);
-//        }
-
-        return $image->response(request()->query('format',$image->extension), request()->query('quality', 100));
+        return $image->response(request()->query('format', $image->extension), request()->query('quality', 100));
     }
 
     /**
