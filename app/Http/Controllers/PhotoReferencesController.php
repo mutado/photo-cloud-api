@@ -128,6 +128,9 @@ class PhotoReferencesController extends Controller
     public function addToFolder(Folder $folder, OriginalPhoto $photo): JsonResponse
     {
         $this->authorize('update', $folder);
+        if ($folder->photoReferences()->where('photo_id', $photo->id)->exists()) {
+            return response()->json(['message' => 'Photo already exists in folder'], 409);
+        }
         $ref = $folder->photoReferences()->create([
             'photo_id' => $photo->id,
         ]);

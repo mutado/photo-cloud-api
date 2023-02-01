@@ -48,6 +48,16 @@ class FoldersController extends Controller
         return response()->json(FolderResource::make($folder), 201);
     }
 
+    public function places(Request $request): JsonResponse
+    {
+        $this->authorize('viewAny', Folder::class);
+
+        return response()->json([
+            'countries'=> auth()->user()->originalPhotos()->whereNot('country',null)->select('country')->distinct()->get(),
+            'cities'=> auth()->user()->originalPhotos()->whereNot('city',null)->select('city')->distinct()->get(),
+        ]);
+    }
+
     /**
      * Show a folder
      *

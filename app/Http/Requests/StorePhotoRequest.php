@@ -9,7 +9,7 @@ class StorePhotoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'photo' => ['required', 'image', 'max:1024', 'mimes:jpeg,png,jpeg,gif'],
+            'photo' => ['required', 'image', 'mimes:jpeg,png,jpeg,gif,heic'],
         ];
     }
 

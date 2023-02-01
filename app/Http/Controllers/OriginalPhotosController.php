@@ -2,16 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PhotoArrayRequest;
 use App\Http\Requests\StorePhotoRequest;
 use App\Http\Resources\OriginalPhotoResource;
+use App\Jobs\ProcessImageJob;
+use App\Mail\TestMail;
 use App\Models\OriginalPhoto;
+use Carbon\Carbon;
+use Faker\Core\Uuid;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
-use Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 /**
@@ -29,10 +36,11 @@ class OriginalPhotosController extends Controller
      * @return JsonResponse
      * @throws AuthorizationException
      */
-    public function index(): JsonResponse
+    public function index(\Illuminate\Http\Request $request): JsonResponse
     {
         $this->authorize('viewAny', OriginalPhoto::class);
-        return response()->json(OriginalPhotoResource::collection(auth()->user()->originalPhotos()->orderBy('created_at', 'desc')->paginate(100)));
+//        dd(auth()->user()->originalPhotos()->filterBy($request->query)->toSql());
+        return response()->json(OriginalPhotoResource::collection(auth()->user()->originalPhotos()->filterBy($request->query)->orderBy('created_at', 'desc')->paginate(100)));
     }
 
     /**
@@ -50,11 +58,24 @@ class OriginalPhotosController extends Controller
     {
         $this->authorize('create', OriginalPhoto::class);
         $validated = $request->validated();
-        $validated['photo'] = $request->file('photo')->store('photos', 'local');
+//        $path = Storage::disk('local')
+//            ->putFileAs(
+//                'originals',
+//               ,
+//                $validated['photo']->hashName()
+//            );
+        $path = $validated['photo']->hashName();
+        $image = Image::make($validated['photo'])
+            ->orientate();
+        $exif = $image->exif();
+        Storage::disk('local')->put('originals/' . $path, $image->encode(null, 100));
         $photo = auth()->user()->originalPhotos()->create([
-            'path' => $validated['photo'],
+            'path' => $path,
         ]);
-        return response()->json(OriginalPhotoResource::make($photo), 201);
+
+        ProcessImageJob::dispatch($photo, $exif);
+
+        return response()->json(OriginalPhotoResource::make($photo->fresh()), 201);
     }
 
     /**
@@ -75,7 +96,7 @@ class OriginalPhotosController extends Controller
             $this->authorize('view', $photo);
             $extension = $arr[1];
 
-            $imageFullPath = Storage::disk('local')->path($photo->path);
+            $imageFullPath = Storage::disk('local')->path('originals/' . $photo->path);
             $image = Image::make($imageFullPath);
 
             return $image->response($extension, request()->query('quality', 100));
@@ -99,11 +120,11 @@ class OriginalPhotosController extends Controller
     {
         $this->authorize('view', $photo);
 
-        if (!Storage::disk('local')->exists($photo->path)) {
+        if (!Storage::disk('local')->exists('originals/' . $photo->path)) {
             abort(404);
         }
 
-        $imageFullPath = Storage::disk('local')->path($photo->path);
+        $imageFullPath = Storage::disk('local')->path('originals/' . $photo->path);
         $image = Image::make($imageFullPath);
 
         // if query param resolution is set, resize the image
@@ -166,8 +187,52 @@ class OriginalPhotosController extends Controller
     public function destroy(OriginalPhoto $photo): JsonResponse
     {
         $this->authorize('delete', $photo);
-        Storage::delete($photo->path);
-        $photo->delete();
+        if ($photo->deleted_at) {
+            $photo->forceDelete();
+        } else {
+            $photo->delete();
+        }
         return response()->json(null, 204);
+    }
+
+    public function recover(OriginalPhoto $photo): JsonResponse
+    {
+        $this->authorize('delete', $photo);
+        $photo->restore();
+        return response()->json(new OriginalPhotoResource($photo->fresh()), 200);
+    }
+
+    public function favorite(PhotoArrayRequest $request): JsonResponse
+    {
+        $validated = $request->validated();
+        $photos = [];
+
+        foreach ($validated['photos'] as $photo) {
+            $photo = OriginalPhoto::find($photo);
+            $this->authorize('update', $photo);
+            $photo->update([
+                'favorite' => $validated['value'],
+            ]);
+            $photos[] = $photo;
+        }
+
+        return response()->json(OriginalPhotoResource::collection($photos), 200);
+    }
+
+    public function hide(PhotoArrayRequest $request): JsonResponse
+    {
+        $validated = $request->validated();
+        $photos = [];
+
+        foreach ($validated['photos'] as $photo) {
+            $photo = OriginalPhoto::find($photo);
+            $this->authorize('update', $photo);
+            $photo->update([
+                'hidden' => $validated['value'],
+            ]);
+            $photos[] = $photo;
+        }
+
+        return response()->json(OriginalPhotoResource::collection($photos), 200);
     }
 }

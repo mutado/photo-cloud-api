@@ -28,21 +28,28 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('photos/favorite', [OriginalPhotosController::class, 'favorite']);
+    Route::post('photos/hide', [OriginalPhotosController::class, 'hide']);
+
     Route::apiResources([
         'photos' => OriginalPhotosController::class,
         'folders' => FoldersController::class,
         'folders.photos' => PhotoReferencesController::class,
         'shared' => SharedFoldersController::class,
     ]);
+    Route::delete('photos/{photo}', [OriginalPhotosController::class, 'destroy'])->withTrashed();
     Route::apiResource('shared.emails', SharedFolderEmailsController::class)->only(['index', 'store', 'destroy']);
+
+    Route::get('photos/{photo}/restore', [OriginalPhotosController::class, 'recover'])->withTrashed();
 
     Route::get('folders/{folder}/references/{photoReference}', [PhotoReferencesController::class, 'showReference']);
     Route::post('folders/{folder}/photos/{photo}', [PhotoReferencesController::class, 'addToFolder']);
     Route::delete('folders/{folder}/references/{photoReference}', [PhotoReferencesController::class, 'destroyReference']);
     Route::post('folders/{folder}/share', [FoldersController::class, 'share']);
+    Route::get('places', [FoldersController::class, 'places']);
 
-    Route::get('photos/{photo}/download', [OriginalPhotosController::class, 'download'])->name('original-photos.download');
-    Route::get('photos/download/{image}', [OriginalPhotosController::class, 'download.extentionld'])->name('original-photos.download.extention');
+    Route::get('photos/{photo}/download', [OriginalPhotosController::class, 'download'])->name('original-photos.download')->withTrashed();
+    Route::get('photos/download/{image}', [OriginalPhotosController::class, 'download.extension'])->name('original-photos.download.extension');
 
     Route::get('statistics/storage', [StatisticsController::class, 'diskUsage']);
     Route::get('statistics/summary', [StatisticsController::class, 'summary']);
